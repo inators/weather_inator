@@ -5,6 +5,7 @@ from pathlib import Path
 
 home = str(Path.home())
 
+# don't exactly want to publish my apiKey on github
 f = open(home+"/apiKey.txt","r")
 if f.mode == "r":  # file opened
 	apiKey = f.read()
@@ -82,11 +83,13 @@ def updateWeather():
 
 	if preferred == "Fahrenheit":
 		ourTemp = kelvinToFahrenheit(weather[0])
+		ourTemp = str(round(ourTemp,2)) +u"\u00b0F"
 	else:
 		ourTemp = kelvinToCelcius(weather[0])
+		ourTemp = str(round(ourTemp,2)) +u"\u00b0C"
 		
-	tempBox.value = round(ourTemp,2)
-	humidBox.value = str(round(weather[1],2)) + "%"
+	tempBox.value = "Temperature: " +ourTemp
+	humidBox.value = "Humidity: " + str(round(weather[1],2)) + "%"
 	picBox.image="pics/"+descToFilename(weather[2])
 
 updateWeather()
