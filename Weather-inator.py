@@ -69,12 +69,27 @@ def getCurrentForecast():
 	print("Temperature:",temperature,"Hum:",humidity,"Desc:"+desc)
 	return [temperature,humidity,desc]
 
-app = App(title="Weather-inator" )
+app = App(title="Weather-inator", layout="grid" )
 
-tempBox = Text(app, size=32)
-humidBox = Text(app, size=32)
-picBox = Picture(app)
-	
+#boxes
+tempBox = Box(app, grid=[0,0,5,1], border=True, width=500, height=250)
+day1Box = Box(app, grid=[0,1], border=True, width=100, height=250)
+day2Box = Box(app, grid=[1,1], border=True, width=100, height=250)
+day3Box = Box(app, grid=[2,1], border=True, width=100, height=250)
+day4Box = Box(app, grid=[3,1], border=True, width=100, height=250)
+day5Box = Box(app, grid=[4,1], border=True, width=100, height=250)
+
+
+
+
+tempText = Text(tempBox, size=32)
+humidBox = Text(tempBox, size=32)
+picBox = Picture(tempBox)
+day1pic = Picture(day1Box, width=100, height=100)	
+day2pic = Picture(day1Box, width=100, height=100)	
+day3pic = Picture(day1Box, width=100, height=100)	
+day4pic = Picture(day1Box, width=100, height=100)	
+day5pic = Picture(day1Box, width=100, height=100)	
 
 
 def updateWeather():
@@ -88,7 +103,7 @@ def updateWeather():
 		ourTemp = kelvinToCelcius(weather[0])
 		ourTemp = str(round(ourTemp,2)) +u"\u00b0C"
 		
-	tempBox.value = "Temperature: " +ourTemp
+	tempText.value = "Temperature: " +ourTemp
 	humidBox.value = "Humidity: " + str(round(weather[1],2)) + "%"
 	picBox.image="pics/"+descToFilename(weather[2])
 
