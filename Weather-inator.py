@@ -3,7 +3,7 @@ import requests, json
 from guizero import App,Box,Picture,Text
 from pathlib import Path
 from pprint import pprint
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 
 home = str(Path.home())
 
@@ -92,7 +92,7 @@ def getCurrentForecast():
         forecastList.append([thisDt,thisTemp,thisHum,thisFor])
         
     pprint(forecastList)
-    midnight = datetime.combine(datetime.today(), time.min).timestamp()
+    midnight = datetime.combine(datetime.today(), time.min) + timedelta(days=1)
     print(midnight)
         
     
