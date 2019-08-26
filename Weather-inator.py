@@ -2,6 +2,8 @@
 import requests, json
 from guizero import App,Box,Picture,Text
 from pathlib import Path
+from pprint import pprint
+from datetime import datetime, date, time
 
 home = str(Path.home())
 
@@ -54,20 +56,48 @@ def kelvinToCelcius(temperature):
 	celcius = temperature - 273.15
 	return celcius
 	
+def getCurrentWeather():
+    global weatherUrl
+    forecast = getForecast(weatherUrl)
+    #make sure we got some data
+    if forecast["cod"] == 200:
+            temperature = forecast["main"]["temp"]
+            humidity = forecast["main"]["humidity"]
+            desc = forecast["weather"][0]["description"]
+    else:
+            temperature = 0
+            humidity = 0
+            desc = "None"
+    print("Temperature:",temperature,"Hum:",humidity,"Desc:"+desc)
+    return [temperature,humidity,desc]
+
 def getCurrentForecast():
-	global weatherUrl
-	forecast = getForecast(weatherUrl)
-	#make sure we got some data
-	if forecast["cod"] == 200:
-		temperature = forecast["main"]["temp"]
-		humidity = forecast["main"]["humidity"]
-		desc = forecast["weather"][0]["description"]
-	else:
-		temperature = 0
-		humidity = 0
-		desc = "None"
-	print("Temperature:",temperature,"Hum:",humidity,"Desc:"+desc)
-	return [temperature,humidity,desc]
+    global forecastUrl
+    forecast = getForecast(forecastUrl)
+    #make sure we got some data
+    if forecast["cod"] == "200":
+        print("hi")
+        #pprint.pprint(forecast)
+    else:
+        return false
+    timezone = forecast["city"]["timezone"]
+    print(forecast['list'][0])
+    forecastList = []
+    #need to iterate through this and figure out the min / max temperature per day
+    for f in forecast['list']:
+        thisDt = datetime.fromtimestamp(f['dt'])
+        thisTemp = f['main']['temp']
+        thisHum = f['main']['humidity']
+        thisFor = (f['weather'][0]['description'])
+        forecastList.append([thisDt,thisTemp,thisHum,thisFor])
+        
+    pprint(forecastList)
+    midnight = datetime.combine(datetime.today(), time.min).timestamp()
+    print(midnight)
+        
+    
+    
+    
 
 app = App(title="Weather-inator", layout="grid" )
 
@@ -86,30 +116,42 @@ tempText = Text(tempBox, size=32)
 humidBox = Text(tempBox, size=32)
 picBox = Picture(tempBox)
 day1pic = Picture(day1Box, width=100, height=100)	
-day2pic = Picture(day1Box, width=100, height=100)	
-day3pic = Picture(day1Box, width=100, height=100)	
-day4pic = Picture(day1Box, width=100, height=100)	
-day5pic = Picture(day1Box, width=100, height=100)	
+day2pic = Picture(day2Box, width=100, height=100)	
+day3pic = Picture(day3Box, width=100, height=100)	
+day4pic = Picture(day4Box, width=100, height=100)	
+day5pic = Picture(day5Box, width=100, height=100)
+day1Text = Text(day1Box)
+day2Text = Text(day2Box)
+day3Text = Text(day3Box)
+day4Text = Text(day4Box)
+day5Text = Text(day5Box)
 
 
 def updateWeather():
-	global preferred
-	weather = getCurrentForecast()
+    global preferred
+    weather = getCurrentWeather()
 
-	if preferred == "Fahrenheit":
-		ourTemp = kelvinToFahrenheit(weather[0])
-		ourTemp = str(round(ourTemp,2)) +u"\u00b0F"
-	else:
-		ourTemp = kelvinToCelcius(weather[0])
-		ourTemp = str(round(ourTemp,2)) +u"\u00b0C"
-		
-	tempText.value = "Temperature: " +ourTemp
-	humidBox.value = "Humidity: " + str(round(weather[1],2)) + "%"
-	picBox.image="pics/"+descToFilename(weather[2])
+    if preferred == "Fahrenheit":
+            ourTemp = kelvinToFahrenheit(weather[0])
+            ourTemp = str(round(ourTemp,2)) +u"\u00b0F"
+    else:
+            ourTemp = kelvinToCelcius(weather[0])
+            ourTemp = str(round(ourTemp,2)) +u"\u00b0C"
+
+    tempText.value = "Temperature: " +ourTemp
+    humidBox.value = "Humidity: " + str(round(weather[1],2)) + "%"
+    picBox.image="pics/"+descToFilename(weather[2])
+
+def updateForecast():
+    global preferred
+    forecast = getCurrentForecast()
 
 updateWeather()
+updateForecast()
+
 
 app.repeat((10*60*1000),updateWeather) #update every 10 minutes
+app.repeat((60*60*1000),updateForecast) #update every hour
 
 
 app.display()
