@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import requests, json
 from guizero import App,Box,Picture,Text
 from pathlib import Path
@@ -11,6 +12,7 @@ else:
 	apiKey = ""
 	
 
+apiKey = apiKey.strip()
 cityName = "Nephi"
 baseUrl = "http://api.openweathermap.org/data/2.5/"
 weatherUrl = baseUrl + "weather?appid=" + apiKey + "&q=" + cityName
