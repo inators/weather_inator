@@ -91,7 +91,6 @@ def getCurrentWeather():
         temperature = 0
         humidity = 0
         desc = "None"
-    print("Temperature:", temperature, "Hum:", humidity, "Desc:" + desc)
     return [temperature, humidity, desc]
 
 def getCurrentForecast():
@@ -125,23 +124,66 @@ def getCurrentForecast():
         thisFor = (f['weather'][0]['description'])
         thisSeriousness = getWeatherSeriousness(thisFor)
         
-        if thisDt > midnights[thisDay]:
+        print(thisDt,round(kelvinToFahrenheit(thisTemp),0),thisHum,thisFor,thisSeriousness)
+        
+        if thisDt >= midnights[thisDay]:
             thisDay += 1
-
+        
         lowTemps[thisDay] = min(thisTemp, lowTemps[thisDay])
         highTemps[thisDay] = max(thisTemp, highTemps[thisDay])
         humidities[thisDay] = max(thisHum, humidities[thisDay])
         seriousnesses[thisDay] = max(thisSeriousness, seriousnesses[thisDay])
-        
-        
-    pprint(highTemps)
-    pprint(lowTemps)
-    print(humidities)
-    pprint(seriousnesses)
+ 
+    return [lowTemps,highTemps,humidities,seriousnesses]    
+ 
+def updateWeather():
+    global preferred
+    weather = getCurrentWeather()
+
+    if preferred == "Fahrenheit":
+        ourTemp = kelvinToFahrenheit(weather[0])
+        ourTemp = str(round(ourTemp, 2)) + u"\u00b0F"
+    else:
+        ourTemp = kelvinToCelcius(weather[0])
+        ourTemp = str(round(ourTemp, 2)) + u"\u00b0C"
+
+    tempText.value = "Temperature: " + ourTemp
+    humidBox.value = "Humidity: " + str(round(weather[1], 2)) + "%"
+    picBox.image = "pics/" + descToFilename(weather[2])
     
+
     
-    
-    
+def updateForecast():
+    global preferred
+    forecast = getCurrentForecast()
+    if preferred == "Fahrenheit":
+        suffix = u"\u00b0F"
+        for x in range(0,6):
+            forecast[0][x] = kelvinToFahrenheit(forecast[0][x])
+            forecast[1][x] = kelvinToFahrenheit(forecast[1][x])
+    else:
+        suffix = u"\u00b0C"
+        for x in range(0,6):
+            forecast[0][x] = kelvinToCelcius(forecast[0][x])
+            forecast[1][x] = kelvinToCelcius(forecast[1][x])
+    todayTemps.value = "Low "+str(round(forecast[0][0],2))+suffix+"\r"+"High "+str(round(forecast[1][0],2))+suffix
+    todayPic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][0])])
+    todayHum.value = str(round(forecast[2][0],2)) + "%"
+
+    #fill out our boxes.  Probably some clever way to do this but I'm going to brute force it
+    day1pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][1])])
+    day2pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][2])])
+    day3pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][3])])
+    day4pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][4])])
+    day5pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][5])])
+
+    day1Text.value = "Low "+str(round(forecast[0][1],0))+suffix+"\rHigh "+str(round(forecast[1][1],0))+suffix
+    day2Text.value = "Low "+str(round(forecast[0][2],0))+suffix+"\rHigh "+str(round(forecast[1][2],0))+suffix
+    day3Text.value = "Low "+str(round(forecast[0][3],0))+suffix+"\rHigh "+str(round(forecast[1][3],0))+suffix
+    day4Text.value = "Low "+str(round(forecast[0][4],0))+suffix+"\rHigh "+str(round(forecast[1][4],0))+suffix
+    day5Text.value = "Low "+str(round(forecast[0][5],0))+suffix+"\rHigh "+str(round(forecast[1][5],0))+suffix
+
+
 
 app = App(title="Weather-inator", layout="grid")
 
@@ -159,6 +201,10 @@ day5Box = Box(app, grid=[4, 1], border=True, width=100, height=150)
 tempText = Text(tempBox, size=32)
 humidBox = Text(tempBox, size=32)
 picBox = Picture(tempBox)
+todayForecastBox = Box(tempBox, layout="grid")
+todayTemps = Text(todayForecastBox,grid=[0,0])
+todayPic = Picture(todayForecastBox, width=100, height=100, grid=[1,0])
+todayHum = Text(todayForecastBox,grid=[2,0])
 day1pic = Picture(day1Box, width=100, height=100)	
 day2pic = Picture(day2Box, width=100, height=100)	
 day3pic = Picture(day3Box, width=100, height=100)	
@@ -171,24 +217,7 @@ day4Text = Text(day4Box)
 day5Text = Text(day5Box)
 
 
-def updateWeather():
-    global preferred
-    weather = getCurrentWeather()
 
-    if preferred == "Fahrenheit":
-        ourTemp = kelvinToFahrenheit(weather[0])
-        ourTemp = str(round(ourTemp, 2)) + u"\u00b0F"
-    else:
-        ourTemp = kelvinToCelcius(weather[0])
-        ourTemp = str(round(ourTemp, 2)) + u"\u00b0C"
-
-    tempText.value = "Temperature: " + ourTemp
-    humidBox.value = "Humidity: " + str(round(weather[1], 2)) + "%"
-    picBox.image = "pics/" + descToFilename(weather[2])
-
-def updateForecast():
-    global preferred
-    forecast = getCurrentForecast()
 
 updateWeather()
 updateForecast()
