@@ -32,7 +32,7 @@ preferred = "Fahrenheit"
 
 #Need some way to pic the most serious picture for a day
 weatherSeriousness = ["clear sky","few clouds","scattered clouds","broken clouds",
-    "show rain","rain","thunderstorm","snow","mist","tornado"]
+    "overcast clouds","light rain","shower rain","rain","thunderstorm","snow","mist","tornado"]
 
 def getWeatherSeriousness(seriousness):
     switcher = {
@@ -40,12 +40,14 @@ def getWeatherSeriousness(seriousness):
         "few clouds":1,
         "scattered clouds":2,
         "broken clouds":3,
-        "shower rain":4,
-        "rain":5,
-        "thunderstorm":6,
-        "snow":7,
-        "mist":8,
-        "tornado":9
+        "overcast clouds":4,
+        "light rain":5,
+        "shower rain":6,
+        "rain":7,
+        "thunderstorm":8,
+        "snow":9,
+        "mist":10,
+        "tornado":11
     }
     return switcher.get(seriousness, 9)
     
@@ -61,7 +63,9 @@ def descToFilename(desc):
         "thunderstorm":"thunder.png",
         "snow":"snow.png",
         "mist":"mist.png",
-        "tornado":"tornado.png"
+        "tornado":"tornado.png",
+        "light rain":"day_rain.png",
+        "overcast clouds":"overcast.png"
     }
     return switcher.get(desc, "tornado.png")
 
@@ -116,7 +120,7 @@ def getCurrentForecast():
     humidities[0] = weatherNow[1]
     seriousnesses[0] =getWeatherSeriousness(weatherNow[2])
     #Tornado is the default.  If we get it print the message so we can assign it later
-    if seriousnesses[0] == "tornado":
+    if seriousnesses[0] == 11:
         print(weatherNow[2])
     
     thisDay = 0
@@ -129,7 +133,7 @@ def getCurrentForecast():
         thisFor = (f['weather'][0]['description'])
         thisSeriousness = getWeatherSeriousness(thisFor)
         #Tornado is the default.  If we get it print the message so we can assign it later
-        if thisSeriousness == "tornado":
+        if thisSeriousness == 11:
             print(thisFor)        
         
         
