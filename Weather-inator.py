@@ -126,7 +126,7 @@ def getCurrentForecast():
     forecast = getForecast(forecastUrl)
     #make sure we got some data
     if forecast["cod"] != "200":
-        return false
+        return False
     timezone = forecast["city"]["timezone"]
 
     midnightTonight = datetime.combine(datetime.today(), time.min) + timedelta(days=1)
@@ -191,6 +191,8 @@ def updateForecast():
     print("Update forecast")
     global preferred
     forecast = getCurrentForecast()
+    if forecast == False:
+        return
     if preferred == "Fahrenheit":
         suffix = u"\u00b0F"
         for x in range(0,6):
