@@ -31,43 +31,65 @@ forecastUrl = baseUrl + "forecast?appid=" + apiKey + "&q=" + cityName
 preferred = "Fahrenheit"
 
 #Need some way to pic the most serious picture for a day
-weatherSeriousness = ["clear sky","few clouds","scattered clouds","broken clouds",
-    "overcast clouds","light rain","shower rain","rain","thunderstorm","snow","mist","tornado"]
+weatherSeriousness = [800,801,802,803,804,701,711,721,731,741,300,301,302,310,311,312,313,314,321,500,501,502,503,504,511,
+    520,521,522,531,200,201,202,210,211,212,221,230,231,232,600,601,602,611,612,613,615,616,620,621,622,781]
 
-def getWeatherSeriousness(seriousness):
+def idToFilename(id):
     switcher = {
-        "clear sky":0,
-        "few clouds":1,
-        "scattered clouds":2,
-        "broken clouds":3,
-        "overcast clouds":4,
-        "light rain":5,
-        "shower rain":6,
-        "rain":7,
-        "thunderstorm":8,
-        "snow":9,
-        "mist":10,
-        "tornado":11
+        800:"day_clear.png",
+        801:"day_partial_cloud.png",
+        802:"day_partial_cloud.png",
+        803:"cloudy.png",
+        804:"overcast.png",
+        701:"mist.png",
+        711:"mist.png",
+        721:"fog.png",
+        731:"fog.png",
+        741:"fog.png",
+        300:"angry_clouds.png",
+        301:"day_rain.png",
+        302:"day_rain.png",
+        310:"day_rain.png",
+        311:"rain.png",
+        312:"rain.png",
+        313:"rain.png",
+        314:"rain.png",
+        321:"rain.png",
+        500:"day_rain.png",
+        501:"day_rain.png",
+        502:"rain.png",
+        503:"rain.png",
+        504:"rain.png",
+        511:"sleet.png",
+        520:"day_rain.png",
+        521:"day_rain.png",
+        522:"rain.png",
+        531:"rain.png",
+        200:"angry_clouds.png",
+        201:"day_rain_thunder.png",
+        202:"rain_thunder.png",
+        210:"angry_clouds.png",
+        211:"thunder.png",
+        212:"thunder.png",
+        221:"thunder.png",
+        230:"day_rain_thunder.png",
+        231:"rain_thunder.png",
+        232:"rain_thunder.png",
+        600:"day_snow.png",
+        601:"snow.png",
+        602:"snow.png",
+        611:"day_sleet.png",
+        612:"day_sleet.png",
+        613:"sleet.png",
+        615:"day_sleet.png",
+        616:"sleet.png",
+        620:"day_snow.png",
+        621:"snow.png",
+        622:"snow.png",
+        781:"tornado.png"
     }
-    return switcher.get(seriousness, 9)
+    return switcher.get(id,"tornado.png")
     
-
-def descToFilename(desc):
-    switcher = {
-        "clear sky":"day_clear.png",
-        "few clouds":"day_partial_cloud.png",
-        "scattered clouds":"cloudy.png",
-        "broken clouds":"angry_clouds.png",
-        "shower rain":"day_rain.png",
-        "rain":"rain.png",
-        "thunderstorm":"thunder.png",
-        "snow":"snow.png",
-        "mist":"mist.png",
-        "tornado":"tornado.png",
-        "light rain":"day_rain.png",
-        "overcast clouds":"overcast.png"
-    }
-    return switcher.get(desc, "tornado.png")
 
 
 def getForecast(Url):
@@ -92,12 +114,12 @@ def getCurrentWeather():
     if forecast["cod"] == 200:
         temperature = forecast["main"]["temp"]
         humidity = forecast["main"]["humidity"]
-        desc = forecast["weather"][0]["description"]
+        id = forecast["weather"][0]["id"]
     else:
         temperature = 0
         humidity = 0
-        desc = "None"
-    return [temperature, humidity, desc]
+        id = 781
+    return [temperature, humidity, id]
 
 def getCurrentForecast():
     global forecastUrl
@@ -118,7 +140,7 @@ def getCurrentForecast():
     weatherNow = getCurrentWeather()
     lowTemps[0] = highTemps[0] = weatherNow[0]
     humidities[0] = weatherNow[1]
-    seriousnesses[0] =getWeatherSeriousness(weatherNow[2])
+    seriousnesses[0] = weatherSeriousness.index(weatherNow[2])
     #Tornado is the default.  If we get it print the message so we can assign it later
     if seriousnesses[0] == 11:
         print(weatherNow[2])
@@ -130,8 +152,8 @@ def getCurrentForecast():
         thisDt = datetime.fromtimestamp(f['dt'])
         thisTemp = f['main']['temp']
         thisHum = f['main']['humidity']
-        thisFor = (f['weather'][0]['description'])
-        thisSeriousness = getWeatherSeriousness(thisFor)
+        thisFor = (f['weather'][0]['id'])
+        thisSeriousness = weatherSeriousness.index(thisFor)
         #Tornado is the default.  If we get it print the message so we can assign it later
         if thisSeriousness == 11:
             print(thisFor)        
@@ -161,7 +183,7 @@ def updateWeather():
 
     tempText.value = "Temperature: " + ourTemp
     humidBox.value = "Humidity: " + str(round(weather[1], 2)) + "%"
-    picBox.image = "pics/" + descToFilename(weather[2])
+    picBox.image = "pics/" + idToFilename(weather[2])
     
 
     
@@ -180,15 +202,15 @@ def updateForecast():
             forecast[0][x] = kelvinToCelcius(forecast[0][x])
             forecast[1][x] = kelvinToCelcius(forecast[1][x])
     todayTemps.value = "Low "+str(round(forecast[0][0],2))+suffix+"\r"+"High "+str(round(forecast[1][0],2))+suffix
-    todayPic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][0])])
+    todayPic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][0])])
     todayHum.value = str(round(forecast[2][0],2)) + "%"
 
     #fill out our boxes.  Probably some clever way to do this but I'm going to brute force it
-    day1pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][1])])
-    day2pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][2])])
-    day3pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][3])])
-    day4pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][4])])
-    day5pic.image = "pics/"+descToFilename(weatherSeriousness[(forecast[3][5])])
+    day1pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][1])])
+    day2pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][2])])
+    day3pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][3])])
+    day4pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][4])])
+    day5pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][5])])
 
     day1Text.value = "Low "+str(round(forecast[0][1],0))+suffix+"\rHigh "+str(round(forecast[1][1],0))+suffix
     day2Text.value = "Low "+str(round(forecast[0][2],0))+suffix+"\rHigh "+str(round(forecast[1][2],0))+suffix
