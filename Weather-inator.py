@@ -53,7 +53,7 @@ def descToFilename(desc):
     switcher = {
         "clear sky":"day_clear.png",
         "few clouds":"day_partial_cloud.png",
-        "scattered clouds":"cloudy",
+        "scattered clouds":"cloudy.png",
         "broken clouds":"angry_clouds.png",
         "shower rain":"day_rain.png",
         "rain":"rain.png",
