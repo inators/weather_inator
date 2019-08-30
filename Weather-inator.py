@@ -124,7 +124,7 @@ def getCurrentForecast():
         thisFor = (f['weather'][0]['description'])
         thisSeriousness = getWeatherSeriousness(thisFor)
         
-        print(thisDt,round(kelvinToFahrenheit(thisTemp),0),thisHum,thisFor,thisSeriousness)
+        
         
         if thisDt >= midnights[thisDay]:
             thisDay += 1
@@ -137,6 +137,7 @@ def getCurrentForecast():
     return [lowTemps,highTemps,humidities,seriousnesses]    
  
 def updateWeather():
+    print("Update weather")
     global preferred
     weather = getCurrentWeather()
 
@@ -154,6 +155,7 @@ def updateWeather():
 
     
 def updateForecast():
+    print("Update forecast")
     global preferred
     forecast = getCurrentForecast()
     if preferred == "Fahrenheit":
