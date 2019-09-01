@@ -115,11 +115,12 @@ def getCurrentWeather():
         temperature = forecast["main"]["temp"]
         humidity = forecast["main"]["humidity"]
         id = forecast["weather"][0]["id"]
+        desc = forecast["weather"][0]["description"]
     else:
         temperature = 0
         humidity = 0
         id = 781
-    return [temperature, humidity, id]
+    return [temperature, humidity, id, desc]
 
 def getCurrentForecast():
     global forecastUrl
@@ -142,7 +143,7 @@ def getCurrentForecast():
     humidities[0] = weatherNow[1]
     seriousnesses[0] = weatherSeriousness.index(weatherNow[2])
     #Tornado is the default.  If we get it print the message so we can assign it later
-    if seriousnesses[0] == 11:
+    if seriousnesses[0] == 51:
         print(weatherNow[2])
     
     thisDay = 0
@@ -155,7 +156,7 @@ def getCurrentForecast():
         thisFor = (f['weather'][0]['id'])
         thisSeriousness = weatherSeriousness.index(thisFor)
         #Tornado is the default.  If we get it print the message so we can assign it later
-        if thisSeriousness == 11:
+        if thisSeriousness == 51:
             print(thisFor)        
         
         
@@ -170,7 +171,7 @@ def getCurrentForecast():
     return [lowTemps,highTemps,humidities,seriousnesses]    
  
 def updateWeather():
-    global tempText, humidBox, picBox
+    global tempText, humidBox, picBox, descBox
     now = datetime.now()    
     print(now.strftime("%Y-%m-%d %H:%M:%S")+" Update weather")
     global preferred
@@ -186,6 +187,7 @@ def updateWeather():
     tempText.value = "Temperature: " + ourTemp
     humidBox.value = "Humidity: " + str(round(weather[1], 2)) + "%"
     picBox.image = "pics/" + idToFilename(weather[2])
+    descBox.value = weather[3]
     
 
     
@@ -222,11 +224,11 @@ def updateForecast():
 
 
 def main():
-    global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText
-    app = App(title="Weather-inator", layout="grid", width=500, height=550)
+    global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText, descBox
+    app = App(title="Weather-inator", layout="grid", width=500, height=600)
 
     #boxes
-    tempBox = Box(app, grid=[0, 0, 5, 1], border=True, width=500, height=350)
+    tempBox = Box(app, grid=[0, 0, 5, 1], border=True, width=500, height=400)
 
 
 
@@ -235,6 +237,7 @@ def main():
     tempText = Text(tempBox, size=32)
     humidBox = Text(tempBox, size=32)
     picBox = Picture(tempBox)
+    descBox = Text(tempBox, size=12)
     todayForecastBox = Box(tempBox, layout="grid")
     todayTemps = Text(todayForecastBox,grid=[0,0])
     todayPic = Picture(todayForecastBox, width=100, height=100, grid=[1,0])
