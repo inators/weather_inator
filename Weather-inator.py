@@ -170,6 +170,7 @@ def getCurrentForecast():
     return [lowTemps,highTemps,humidities,seriousnesses]    
  
 def updateWeather():
+    global tempText, humidBox, picBox
     print("Update weather")
     global preferred
     weather = getCurrentWeather()
@@ -188,6 +189,7 @@ def updateWeather():
 
     
 def updateForecast():
+    global todayTemps, todayPic, todayHum, dayPic, dayText
     print("Update forecast")
     global preferred
     forecast = getCurrentForecast()
@@ -207,64 +209,52 @@ def updateForecast():
     todayPic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][0])])
     todayHum.value = str(round(forecast[2][0],2)) + "%"
 
-    #fill out our boxes.  Probably some clever way to do this but I'm going to brute force it
-    day1pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][1])])
-    day2pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][2])])
-    day3pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][3])])
-    day4pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][4])])
-    day5pic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][5])])
-
-    day1Text.value = "Low "+str(round(forecast[0][1],0))+suffix+"\rHigh "+str(round(forecast[1][1],0))+suffix
-    day2Text.value = "Low "+str(round(forecast[0][2],0))+suffix+"\rHigh "+str(round(forecast[1][2],0))+suffix
-    day3Text.value = "Low "+str(round(forecast[0][3],0))+suffix+"\rHigh "+str(round(forecast[1][3],0))+suffix
-    day4Text.value = "Low "+str(round(forecast[0][4],0))+suffix+"\rHigh "+str(round(forecast[1][4],0))+suffix
-    day5Text.value = "Low "+str(round(forecast[0][5],0))+suffix+"\rHigh "+str(round(forecast[1][5],0))+suffix
+    for x in range(0,5):
+        dayPic[x].image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][x+1])])
+        dayText[x].value = "Low "+str(round(forecast[0][x+1],0))+suffix+"\rHigh "+str(round(forecast[1][x+1],0))+suffix
 
 
 
-app = App(title="Weather-inator", layout="grid")
+def main():
+    global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText
+    app = App(title="Weather-inator", layout="grid")
 
-#boxes
-tempBox = Box(app, grid=[0, 0, 5, 1], border=True, width=500, height=350)
-day1Box = Box(app, grid=[0, 1], border=True, width=100, height=150)
-day2Box = Box(app, grid=[1, 1], border=True, width=100, height=150)
-day3Box = Box(app, grid=[2, 1], border=True, width=100, height=150)
-day4Box = Box(app, grid=[3, 1], border=True, width=100, height=150)
-day5Box = Box(app, grid=[4, 1], border=True, width=100, height=150)
+    #boxes
+    tempBox = Box(app, grid=[0, 0, 5, 1], border=True, width=500, height=350)
 
 
 
 
-tempText = Text(tempBox, size=32)
-humidBox = Text(tempBox, size=32)
-picBox = Picture(tempBox)
-todayForecastBox = Box(tempBox, layout="grid")
-todayTemps = Text(todayForecastBox,grid=[0,0])
-todayPic = Picture(todayForecastBox, width=100, height=100, grid=[1,0])
-todayHum = Text(todayForecastBox,grid=[2,0])
-day1pic = Picture(day1Box, width=100, height=100)	
-day2pic = Picture(day2Box, width=100, height=100)	
-day3pic = Picture(day3Box, width=100, height=100)	
-day4pic = Picture(day4Box, width=100, height=100)	
-day5pic = Picture(day5Box, width=100, height=100)
-day1Text = Text(day1Box)
-day2Text = Text(day2Box)
-day3Text = Text(day3Box)
-day4Text = Text(day4Box)
-day5Text = Text(day5Box)
+
+    tempText = Text(tempBox, size=32)
+    humidBox = Text(tempBox, size=32)
+    picBox = Picture(tempBox)
+    todayForecastBox = Box(tempBox, layout="grid")
+    todayTemps = Text(todayForecastBox,grid=[0,0])
+    todayPic = Picture(todayForecastBox, width=100, height=100, grid=[1,0])
+    todayHum = Text(todayForecastBox,grid=[2,0])
+    dayBox = []
+    dayPic = []
+    dayText = []
+    for x in range(0,5):
+        dayBox.append(Box(app, grid=[x, 1], border=True, width=100, height=150))
+        dayPic.append(Picture(dayBox[x], width=100, height=100))
+        dayText.append(Text(dayBox[x]))
 
 
 
 
-updateWeather()
-updateForecast()
+    updateWeather()
+    updateForecast()
 
 
-app.repeat((10 * 60 * 1000),updateWeather) #update every 10 minutes
-app.repeat((60*60*1000),updateForecast) #update every hour
+    app.repeat((10 * 60 * 1000),updateWeather) #update every 10 minutes
+    app.repeat((60*60*1000),updateForecast) #update every hour
 
 
-app.display()
+    app.display()
 
 		
 	
+if __name__ == '__main__':
+    main()
