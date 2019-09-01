@@ -171,7 +171,8 @@ def getCurrentForecast():
  
 def updateWeather():
     global tempText, humidBox, picBox
-    print("Update weather")
+    now = datetime.now()    
+    print(now.strftime("%Y-%m-%d %H:%M:%S")+" Update weather")
     global preferred
     weather = getCurrentWeather()
 
@@ -189,8 +190,9 @@ def updateWeather():
 
     
 def updateForecast():
-    global todayTemps, todayPic, todayHum, dayPic, dayText
-    print("Update forecast")
+    global todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText
+    now = datetime.now()    
+    print(now.strftime("%Y-%m-%d %H:%M:%S")+" Update forecast")
     global preferred
     forecast = getCurrentForecast()
     if forecast == False:
@@ -205,19 +207,23 @@ def updateForecast():
         for x in range(0,6):
             forecast[0][x] = kelvinToCelcius(forecast[0][x])
             forecast[1][x] = kelvinToCelcius(forecast[1][x])
-    todayTemps.value = "Low "+str(round(forecast[0][0],2))+suffix+"\r"+"High "+str(round(forecast[1][0],2))+suffix
+    todayTemps.value = "High "+str(round(forecast[1][0],2))+suffix+"\rLow "+str(round(forecast[0][0],2))+suffix+"\r"
     todayPic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][0])])
-    todayHum.value = str(round(forecast[2][0],2)) + "%"
+    todayHum.value = str(round(forecast[2][0],2)) + "% Humidity"
+    
+    today = date.today()
 
     for x in range(0,5):
+        thisDay = today + timedelta(days=(x+1))
+        dayDOWText[x].value = thisDay.strftime("%A")
         dayPic[x].image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][x+1])])
-        dayText[x].value = "Low "+str(round(forecast[0][x+1],0))+suffix+"\rHigh "+str(round(forecast[1][x+1],0))+suffix
+        dayText[x].value = "High "+str(round(forecast[1][x+1],0))+suffix+"\rLow "+str(round(forecast[0][x+1],0))+suffix
 
 
 
 def main():
-    global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText
-    app = App(title="Weather-inator", layout="grid")
+    global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText
+    app = App(title="Weather-inator", layout="grid", width=500, height=550)
 
     #boxes
     tempBox = Box(app, grid=[0, 0, 5, 1], border=True, width=500, height=350)
@@ -233,11 +239,13 @@ def main():
     todayTemps = Text(todayForecastBox,grid=[0,0])
     todayPic = Picture(todayForecastBox, width=100, height=100, grid=[1,0])
     todayHum = Text(todayForecastBox,grid=[2,0])
+    dayDOWText = []
     dayBox = []
     dayPic = []
     dayText = []
     for x in range(0,5):
-        dayBox.append(Box(app, grid=[x, 1], border=True, width=100, height=150))
+        dayBox.append(Box(app, grid=[x, 1], border=True, width=100, height=200))
+        dayDOWText.append(Text(dayBox[x]))
         dayPic.append(Picture(dayBox[x], width=100, height=100))
         dayText.append(Text(dayBox[x]))
 
