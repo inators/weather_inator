@@ -228,7 +228,7 @@ def updateForecast():
         dayDOWText[x].value = thisDay.strftime("%A")
         dayPic[x].image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][x+1])])
         dayText[x].value = "High "+str(round(forecast[1][x+1],0))+suffix+"\rLow "+str(round(forecast[0][x+1],0))+suffix
-        descText[x].value += "\r"+weatherSeriousnessDesc[(forecast[3][x+1])]
+        descText[x].value = weatherSeriousnessDesc[(forecast[3][x+1])]
 
 
 
