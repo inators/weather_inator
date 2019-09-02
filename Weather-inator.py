@@ -33,6 +33,13 @@ preferred = "Fahrenheit"
 #Need some way to pic the most serious picture for a day
 weatherSeriousness = [800,801,802,803,804,701,711,721,731,741,300,301,302,310,311,312,313,314,321,500,501,502,503,504,511,
     520,521,522,531,200,201,202,210,211,212,221,230,231,232,600,601,602,611,612,613,615,616,620,621,622,781]
+#Want to carry forward the description so I need the list of valid descriptions from openweathermap
+weatherSeriousnessDesc = ["Clear Sky","Few clouds","Scattered clouds","Broken clouds","Overcast clouds","Mist","Smoke","Haze",
+    "Dust","Fog","Light drizzle","Drizzle","Heavy drizzle","Light drizzle rain","Heavy drizzle rain","Shower rain and drizzle","Heavy shower rain and drizzle",
+    "Shower drizzle","Light rain","Moderate rain","Heavy rain","Very heavy rain","Extreme rain","Freezing rain","Light shower rain","Shower rain","Heavy shower rain",
+    "Ragged shower rain","Thunderstorm with light rain","Thunderstorm with rain","Thunderstorm with heavy rain","Light thunderstorm","Thunderstorm","Heavy thunderstorm",
+    "Ragged thunderstorm","Thunderstorm with light drizzle","Thunderstorm with drizzle","Thunderstorm with heavy drizzle","Light snow","Snow","Heavy snow","Sleet",
+    "Light shower sleet","Shower sleet","Light rain and snow","Rain and snow","Light shower snow","Shower snow","Heavy shower snow","Tornado"]
 
 def idToFilename(id):
     switcher = {
@@ -192,10 +199,10 @@ def updateWeather():
 
     
 def updateForecast():
-    global todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText
+    global todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText, todayDesc, descText
     now = datetime.now()    
     print(now.strftime("%Y-%m-%d %H:%M:%S")+" Update forecast")
-    global preferred
+    global preferred, weatherSeriousnessDesc
     forecast = getCurrentForecast()
     if forecast == False:
         return
@@ -212,6 +219,7 @@ def updateForecast():
     todayTemps.value = "High "+str(round(forecast[1][0],2))+suffix+"\rLow "+str(round(forecast[0][0],2))+suffix+"\r"
     todayPic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][0])])
     todayHum.value = str(round(forecast[2][0],2)) + "% Humidity"
+    todayDesc.value = weatherSeriousnessDesc[(forecast[3][0])]
     
     today = date.today()
 
@@ -220,11 +228,12 @@ def updateForecast():
         dayDOWText[x].value = thisDay.strftime("%A")
         dayPic[x].image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][x+1])])
         dayText[x].value = "High "+str(round(forecast[1][x+1],0))+suffix+"\rLow "+str(round(forecast[0][x+1],0))+suffix
+        descText[x].value += "\r"+weatherSeriousnessDesc[(forecast[3][x+1])]
 
 
 
 def main():
-    global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText, descBox
+    global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText, descBox, todayDesc, descText
     app = App(title="Weather-inator", layout="grid", width=500, height=600)
 
     #boxes
@@ -242,15 +251,18 @@ def main():
     todayTemps = Text(todayForecastBox,grid=[0,0])
     todayPic = Picture(todayForecastBox, width=100, height=100, grid=[1,0])
     todayHum = Text(todayForecastBox,grid=[2,0])
+    todayDesc = Text(todayForecastBox,grid=[0,3,3,1])
     dayDOWText = []
     dayBox = []
     dayPic = []
     dayText = []
+    descText = []
     for x in range(0,5):
         dayBox.append(Box(app, grid=[x, 1], border=True, width=100, height=200))
         dayDOWText.append(Text(dayBox[x]))
         dayPic.append(Picture(dayBox[x], width=100, height=100))
         dayText.append(Text(dayBox[x]))
+        descText.append(Text(dayBox[x], size=10))
 
 
 
