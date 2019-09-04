@@ -127,6 +127,7 @@ def getCurrentWeather():
         temperature = 0
         humidity = 0
         id = 781
+        desc = "no report"
     return [temperature, humidity, id, desc]
 
 def getCurrentForecast():
