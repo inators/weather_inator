@@ -100,7 +100,13 @@ def idToFilename(id):
 
 
 def getForecast(Url):
-    response = requests.get(Url)
+    try: 
+        response = requests.get(Url)
+    except requests.ConnectionError:
+        print("Connection Error")
+        forecast= {"cod":404}
+        return forecast
+    
     forecast = response.json()
     return forecast
 
