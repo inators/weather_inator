@@ -15,7 +15,7 @@ import socket
 import logging
 from time import sleep
 
-logging.basicConfig(level=logging.INFO, filename='mylog.log')
+logging.basicConfig(level=logging.INFO, filename='weather-inator.log')
 
 
 home = str(Path.home())
@@ -206,7 +206,7 @@ def updateWeather():
 
     tempText.value = "Temperature: " + ourTemp
     humidBox.value = "Humidity: " + str(round(weather[1], 2)) + "%"
-    picBox.image = "pics/" + idToFilename(weather[2])
+    picBox.image = "~/coding/weather_inator/pics/" + idToFilename(weather[2])
     descBox.value = weather[3]
     
 
@@ -321,7 +321,6 @@ def wait_for_internet_connection(interval=5):
 	
 if __name__ == '__main__':
     try:
-	sleep(5)
         wait_for_internet_connection()
         main()
     except Exception as e:
