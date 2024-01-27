@@ -17,7 +17,7 @@ from time import sleep
 
 logging.basicConfig(level=logging.INFO, filename='weather-inator.log')
 
-
+debug = True
 home = str(Path.home())
 
 # don't exactly want to publish my apiKey on github
@@ -48,6 +48,8 @@ weatherSeriousnessDesc = ["Clear Sky","Few clouds","Scattered clouds","Broken cl
     "Light shower sleet","Shower sleet","Light rain and snow","Rain and snow","Light shower snow","Shower snow","Heavy shower snow","Tornado"]
 
 def idToFilename(id):
+    if debug:
+        print(f"idToFilename({id})")
     switcher = {
         800:"day_clear.png",
         801:"day_partial_cloud.png",
@@ -106,6 +108,8 @@ def idToFilename(id):
 
 
 def getForecast(Url):
+    if debug:
+        print(f"getForecast({Url}")
     try: 
         response = requests.get(Url)
     except requests.ConnectionError:
@@ -127,6 +131,8 @@ def kelvinToCelcius(temperature):
     return celcius
 	
 def getCurrentWeather():
+    if debug:
+        print(f"getCurrentWeather()")
     global weatherUrl
     forecast = getForecast(weatherUrl)
     #make sure we got some data
@@ -143,6 +149,8 @@ def getCurrentWeather():
     return [temperature, humidity, id, desc]
 
 def getCurrentForecast():
+    if debug:
+        print(f"getCurrentForecast")
     global forecastUrl
     forecast = getForecast(forecastUrl)
     #make sure we got some data
@@ -191,6 +199,8 @@ def getCurrentForecast():
     return [lowTemps,highTemps,humidities,seriousnesses]    
  
 def updateWeather():
+    if debug:
+        print("updateWeather")
     global tempText, humidBox, picBox, descBox
     now = datetime.now()    
     print(now.strftime("%Y-%m-%d %H:%M:%S")+" Update weather")
@@ -206,12 +216,21 @@ def updateWeather():
 
     tempText.value = "Temperature: " + ourTemp
     humidBox.value = "Humidity: " + str(round(weather[1], 2)) + "%"
-    picBox.image = "~/coding/weather_inator/pics/" + idToFilename(weather[2])
+    if debug:
+        print(f"idToFilename = {idToFilename(weather[2])}")
+    try:
+        picBox.image = "pics/" + idToFilename(weather[2])
+    except:
+        logging.exception("pixBox.image")
+    if debug:
+        print(f"picBox.image = {picBox.image}")
     descBox.value = weather[3]
     
 
     
 def updateForecast():
+    if debug:
+        print("updateForecast")
     global todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText, todayDesc, descText
     now = datetime.now()    
     print(now.strftime("%Y-%m-%d %H:%M:%S")+" Update forecast")
@@ -246,6 +265,8 @@ def updateForecast():
 
 
 def main():
+    if debug:
+        print("main start")
     global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText, descBox, todayDesc, descText
     app = App(title="Weather-inator", layout="grid", width=500, height=600)
 
@@ -290,38 +311,21 @@ def main():
 
     app.display()
 
-def check_internet_connection(host="8.8.8.8", port=53, timeout=3):
-    """
-    Check for internet connectivity by trying to establish a socket connection.
-    :param host: Host to connect to (default is Google's public DNS server).
-    :param port: Port to connect to (default is 53, the DNS service port).
-    :param timeout: Connection timeout in seconds.
-    :return: True if the connection is successful, False otherwise.
-    """
+def has_internet():
     try:
-        socket.setdefaulttimeout(timeout)
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((host, port))
-        sock.close()
+        requests.get("https://www.google.com", timeout=5)
+        logging.info("internet connection obtained!")
         return True
-    except socket.error:
-        return False
-
-def wait_for_internet_connection(interval=5):
-    """
-    Wait for an internet connection, checking periodically.
-    :param interval: Time in seconds between checks.
-    """
-    print("Checking for internet connection...")
-    while not check_internet_connection():
-        print("No internet connection available. Waiting...")
-        time.sleep(interval)
-    print("Internet connection established.")
-		
+    except requests.ConnectionError:
+        logging.info("No internet connection yet.")
+        return False		
 	
 if __name__ == '__main__':
     try:
-        wait_for_internet_connection()
+        while not has_internet():
+            print("Waiting for internet...")
+            time.sleep(5)
         main()
     except Exception as e:
         logging.exception("Something happened")
+
