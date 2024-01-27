@@ -13,7 +13,7 @@ from pprint import pprint
 import requests
 import socket
 import logging
-
+from time import sleep
 
 logging.basicConfig(level=logging.INFO, filename='mylog.log')
 
@@ -321,6 +321,7 @@ def wait_for_internet_connection(interval=5):
 	
 if __name__ == '__main__':
     try:
+	sleep(5)
         wait_for_internet_connection()
         main()
     except Exception as e:
