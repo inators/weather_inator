@@ -15,7 +15,7 @@ import socket
 import logging
 from time import sleep
 
-logging.basicConfig(level=logging.INFO, filename='weather-inator.log')
+logging.basicConfig(level=logging.INFO, filename='~/weather-inator.log')
 
 debug = True
 home = str(Path.home())
