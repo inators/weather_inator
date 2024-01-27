@@ -17,7 +17,7 @@ from time import sleep
 
 logging.basicConfig(level=logging.INFO, filename='/home/pi/weather-inator.log')
 
-debug = True
+debug = False
 home = str(Path.home())
 
 # don't exactly want to publish my apiKey on github
@@ -269,9 +269,11 @@ def main():
         print("main start")
     global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText, descBox, todayDesc, descText
     app = App(title="Weather-inator", layout="grid", width=500, height=600)
+    app.tk.geometry('%dx%d+%d+%d' % (500, 600, 0, 50))
 
     #boxes
     tempBox = Box(app, grid=[0, 0, 5, 1], border=True, width=500, height=400)
+
 
 
 
@@ -320,6 +322,15 @@ def has_internet():
         logging.info("No internet connection yet.")
         return False		
 	
+
+
+
+    
+    
+    
+    
+    
+    
 if __name__ == '__main__':
     try:
         while not has_internet():
