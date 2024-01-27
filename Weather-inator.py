@@ -12,6 +12,11 @@ from pathlib import Path
 from pprint import pprint
 import requests
 import socket
+import logging
+from time import sleep
+
+logging.basicConfig(level=logging.INFO, filename='weather-inator.log')
+
 
 home = str(Path.home())
 
@@ -201,7 +206,7 @@ def updateWeather():
 
     tempText.value = "Temperature: " + ourTemp
     humidBox.value = "Humidity: " + str(round(weather[1], 2)) + "%"
-    picBox.image = "pics/" + idToFilename(weather[2])
+    picBox.image = "~/coding/weather_inator/pics/" + idToFilename(weather[2])
     descBox.value = weather[3]
     
 
