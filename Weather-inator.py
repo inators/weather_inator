@@ -16,9 +16,10 @@ from time import sleep
 import logging
 import sys
 import os
+from colors import Colors
 
-filename = os.path.basename("__file__")
-logger = logging.getLogger("calendar-inator")
+filename = os.path.basename(__file__)
+logger = logging.getLogger(f"{Colors.PURPLE}{filename}{Colors.END}")
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(name)s] %(message)s',
                      filename="/home/pi/mylogs.log")
 logger.info("Program start.")
@@ -234,7 +235,7 @@ def updateWeather():
     if debug:
         print(f"picBox.image = {picBox.image}")
     descBox.value = weather[3]
-    
+    app.update()    
 
     
 def updateForecast():
@@ -270,7 +271,7 @@ def updateForecast():
         dayPic[x].image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][x+1])])
         dayText[x].value = "High "+str(round(forecast[1][x+1],0))+suffix+"\rLow "+str(round(forecast[0][x+1],0))+suffix
         descText[x].value = weatherSeriousnessDesc[(forecast[3][x+1])]
-
+    app.update()
 
 
 def main():
