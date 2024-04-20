@@ -57,6 +57,9 @@ weatherSeriousnessDesc = ["Clear Sky","Few clouds","Scattered clouds","Broken cl
     "Ragged thunderstorm","Thunderstorm with light drizzle","Thunderstorm with drizzle","Thunderstorm with heavy drizzle","Light snow","Snow","Heavy snow","Sleet",
     "Light shower sleet","Shower sleet","Light rain and snow","Rain and snow","Light shower snow","Shower snow","Heavy shower snow","Tornado"]
 
+app = App(title="Weather-inator", layout="grid", width=500, height=600)
+
+
 def idToFilename(id):
     if debug:
         print(f"idToFilename({id})")
@@ -278,7 +281,6 @@ def main():
     if debug:
         print("main start")
     global tempText, humidBox, picBox, todayTemps, todayPic, todayHum, dayPic, dayText, dayDOWText, descBox, todayDesc, descText
-    app = App(title="Weather-inator", layout="grid", width=500, height=600)
     app.tk.geometry('%dx%d+%d+%d' % (500, 600, 0, 50))
 
     #boxes
