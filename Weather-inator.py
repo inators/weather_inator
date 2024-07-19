@@ -19,9 +19,11 @@ import os
 from colors import Colors
 
 filename = os.path.basename(__file__)
+homefolder = os.path.expanduser("~")
+credsfolder = f"{homefolder}/creds"
 logger = logging.getLogger(f"{Colors.PURPLE}{filename}{Colors.END}")
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(name)s] %(message)s',
-                     filename="/home/pi/mylogs.log")
+                     filename=f"{homefolder}/mylogs.log")
 logger.info("Program start.")
 sys.stderr.write = logger.error
 sys.stdout.write = logger.info
@@ -31,7 +33,7 @@ debug = False
 home = str(Path.home())
 
 # don't exactly want to publish my apiKey on github
-f = open(home + "/apiKey.txt", "r")
+f = open(home + f"{credsfolder}/weatherinatorapiKey.txt", "r")
 if f.mode == "r":  # file opened
     apiKey = f.read()
 else:
