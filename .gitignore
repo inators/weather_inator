@@ -2,4 +2,4 @@ mylog.log
 /nbproject/private/
 /nbproject/
 __pycache__
-__pycache__
+.venv
