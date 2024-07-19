@@ -21,6 +21,7 @@ from colors import Colors
 filename = os.path.basename(__file__)
 homefolder = os.path.expanduser("~")
 credsfolder = f"{homefolder}/creds"
+picfolder = os.path.dirname(os.path.abspath(__file__)) + "/pics/"
 logger = logging.getLogger(f"{Colors.PURPLE}{filename}{Colors.END}")
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(name)s] %(message)s',
                      filename=f"{homefolder}/mylogs.log")
@@ -234,7 +235,7 @@ def updateWeather():
     if debug:
         print(f"idToFilename = {idToFilename(weather[2])}")
     try:
-        picBox.image = "pics/" + idToFilename(weather[2])
+        picBox.image = picfolder + idToFilename(weather[2])
     except:
         logging.exception("pixBox.image")
     if debug:
@@ -264,7 +265,7 @@ def updateForecast():
             forecast[0][x] = kelvinToCelcius(forecast[0][x])
             forecast[1][x] = kelvinToCelcius(forecast[1][x])
     todayTemps.value = "High "+str(round(forecast[1][0],2))+suffix+"\rLow "+str(round(forecast[0][0],2))+suffix+"\r"
-    todayPic.image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][0])])
+    todayPic.image = picfolder+idToFilename(weatherSeriousness[(forecast[3][0])])
     todayHum.value = str(round(forecast[2][0],2)) + "% Humidity"
     todayDesc.value = weatherSeriousnessDesc[(forecast[3][0])]
     
@@ -273,7 +274,7 @@ def updateForecast():
     for x in range(0,5):
         thisDay = today + timedelta(days=(x+1))
         dayDOWText[x].value = thisDay.strftime("%A")
-        dayPic[x].image = "pics/"+idToFilename(weatherSeriousness[(forecast[3][x+1])])
+        dayPic[x].image = picfolder+idToFilename(weatherSeriousness[(forecast[3][x+1])])
         dayText[x].value = "High "+str(round(forecast[1][x+1],0))+suffix+"\rLow "+str(round(forecast[0][x+1],0))+suffix
         descText[x].value = weatherSeriousnessDesc[(forecast[3][x+1])]
     app.update()
