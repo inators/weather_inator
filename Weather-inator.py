@@ -33,7 +33,7 @@ debug = False
 home = str(Path.home())
 
 # don't exactly want to publish my apiKey on github
-f = open(home + f"{credsfolder}/weatherinatorapiKey.txt", "r")
+f = open(f"{credsfolder}/weatherinatorapiKey.txt", "r")
 if f.mode == "r":  # file opened
     apiKey = f.read()
 else:
